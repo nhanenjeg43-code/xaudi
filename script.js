@@ -1,4 +1,8 @@
-// Store utility functions
+/* ==========================
+   UTILITY FUNCTIONS
+========================== */
+
+// Local storage helper
 const store = {
   get: (key, fallback = []) => {
     try {
@@ -13,11 +17,14 @@ const store = {
   }
 };
 
-// DOM utility functions
+// DOM selectors
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 
-// Seed data
+/* ==========================
+   SEED DATA
+========================== */
+
 const seedBeats = [
   {
     id: 'beat-1',
@@ -34,7 +41,7 @@ const seedBeats = [
     id: 'beat-2',
     title: 'Summer Dreams',
     price: 24.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     audio: 'assets/audio/silence.wav',
     bpm: 95,
     key: 'Fmaj',
@@ -45,7 +52,7 @@ const seedBeats = [
     id: 'beat-3',
     title: 'Urban Flow',
     price: 34.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/164837/pexels-photo-164837.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     audio: 'assets/audio/silence.wav',
     bpm: 75,
     key: 'Gmin',
@@ -59,7 +66,7 @@ const seedPacks = [
     id: 'pack-1',
     title: 'Drum Kit Vol. 1',
     price: 19.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/414999/pexels-photo-414999.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     files: 120,
     downloadLink: 'https://drive.google.com/example4'
   },
@@ -67,7 +74,7 @@ const seedPacks = [
     id: 'pack-2',
     title: 'Synth Essentials',
     price: 24.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     files: 80,
     downloadLink: 'https://drive.google.com/example5'
   }
@@ -78,7 +85,7 @@ const seedPresets = [
     id: 'preset-1',
     title: 'Vocal Chain Pro',
     price: 14.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/166094/pexels-photo-166094.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     daw: 'FL Studio',
     downloadLink: 'https://drive.google.com/example6'
   },
@@ -86,42 +93,77 @@ const seedPresets = [
     id: 'preset-2',
     title: 'R&B Vocal Master',
     price: 19.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
+    cover: 'https://images.pexels.com/photos/166093/pexels-photo-166093.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
     daw: 'Ableton',
     downloadLink: 'https://drive.google.com/example7'
   }
 ];
 
-// Audio player state
+/* ==========================
+   STATE VARIABLES
+========================== */
+
 let currentAudio = null;
 let currentPlayingId = null;
+let progressInterval = null;
 
-// Load all products from store
+/* ==========================
+   DATA LOADING
+========================== */
+
+// Load products from localStorage
 function loadProducts() {
   const beats = store.get('catalogBeats', seedBeats);
   const packs = store.get('catalogPacks', seedPacks);
   const presets = store.get('catalogPresets', seedPresets);
-
   return { beats, packs, presets };
 }
 
-// Initialize catalog with seed data if missing
+// Load products from server.json
+async function loadProductsFromServer() {
+  try {
+    const response = await fetch('products.json');
+    if (!response.ok) throw new Error('Failed to load products');
+
+    const products = await response.json();
+
+    return {
+      beats: products.filter(p => p.category === 'beats'),
+      music: products.filter(p => p.category === 'music'),
+      packs: products.filter(p => p.category === 'sample-packs'),
+      presets: products.filter(p => p.category === 'vocal-presets')
+    };
+  } catch (error) {
+    console.error('Error loading products:', error);
+    return loadProducts(); // fallback
+  }
+}
+
+/* ==========================
+   CATALOG INITIALIZATION
+========================== */
+
 function initCatalog() {
   if (!store.get('catalogBeats')) store.set('catalogBeats', seedBeats);
   if (!store.get('catalogPacks')) store.set('catalogPacks', seedPacks);
   if (!store.get('catalogPresets')) store.set('catalogPresets', seedPresets);
 
-  // Initialize music using beats data
   if (!store.get('catalogMusic')) store.set('catalogMusic', seedBeats);
 }
 
-// Play audio preview
+/* ==========================
+   AUDIO PLAYER FUNCTIONS
+========================== */
+
 function playPreview(id, audioUrl, title) {
+  const progressBar = $('#audioProgress');
+
   // Stop current audio if playing
   if (currentAudio) {
     currentAudio.pause();
     currentAudio = null;
-    
+    clearInterval(progressInterval);
+
     // Reset previous play button
     if (currentPlayingId) {
       const prevBtn = $(`button[data-id="${currentPlayingId}"]`);
@@ -132,21 +174,21 @@ function playPreview(id, audioUrl, title) {
     }
   }
 
-  // If clicking the same button that's already playing, just stop it
+  // Stop if clicking the same button
   if (currentPlayingId === id) {
     currentPlayingId = null;
     updateNowPlaying('—');
+    if (progressBar) progressBar.style.width = '0%';
     return;
   }
 
-  // Update now playing text
+  // Update now playing
   updateNowPlaying(title);
 
-  // Create and play new audio
+  // Play new audio
   currentAudio = new Audio(audioUrl);
   currentPlayingId = id;
-  
-  // Update play button
+
   const playBtn = $(`button[data-id="${id}"]`);
   if (playBtn) {
     playBtn.innerHTML = '<span>Stop</span>';
@@ -154,7 +196,18 @@ function playPreview(id, audioUrl, title) {
   }
 
   currentAudio.play();
-  
+
+  // Update progress bar
+  if (progressBar) {
+    progressBar.style.width = '0%';
+    progressInterval = setInterval(() => {
+      if (currentAudio && currentAudio.duration > 0) {
+        const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
+        progressBar.style.width = percent + '%';
+      }
+    }, 100);
+  }
+
   currentAudio.onended = () => {
     if (playBtn) {
       playBtn.innerHTML = '<span>Play</span>';
@@ -162,24 +215,26 @@ function playPreview(id, audioUrl, title) {
     }
     currentPlayingId = null;
     updateNowPlaying('—');
+    if (progressBar) progressBar.style.width = '0%';
+    clearInterval(progressInterval);
     currentAudio = null;
   };
 }
 
-// Update now playing text
 function updateNowPlaying(title) {
   const nowPlaying = $('#nowPlaying');
-  if (nowPlaying) {
-    nowPlaying.textContent = title;
-  }
+  if (nowPlaying) nowPlaying.textContent = title;
 }
 
-// Render Beats page
+/* ==========================
+   RENDER FUNCTIONS
+========================== */
+
 function renderBeats() {
   const grid = $('#beatsGrid');
   if (!grid) return;
 
-  let beats = store.get('catalogBeats', []);
+  const beats = window.serverProducts?.beats || store.get('catalogBeats', []);
   const q = $('#searchBeats');
   const s = $('#sortBeats');
 
@@ -207,12 +262,11 @@ function renderBeats() {
   apply();
 }
 
-// Render Music page (uses beats data)
 function renderMusic() {
   const grid = $('#musicGrid');
   if (!grid) return;
 
-  let music = store.get('catalogBeats', []);
+  const music = window.serverProducts?.music || store.get('catalogBeats', []);
   const q = $('#searchMusic');
   const s = $('#sortMusic');
 
@@ -229,7 +283,7 @@ function renderMusic() {
 
     if (s?.value === 'priceLow') list.sort((a, b) => a.price - b.price);
     else if (s?.value === 'priceHigh') list.sort((a, b) => b.price - a.price);
-    else list.reverse(); // newest first
+    else list.reverse();
 
     grid.innerHTML = list.map(b => beatCard({
       ...b,
@@ -243,12 +297,11 @@ function renderMusic() {
   apply();
 }
 
-// Render Packs page
 function renderPacks() {
   const grid = $('#packsGrid');
   if (!grid) return;
 
-  const packs = store.get('catalogPacks', []);
+  const packs = window.serverProducts?.packs || store.get('catalogPacks', []);
 
   grid.innerHTML = packs.map(p => cardSimple({
     ...p,
@@ -258,39 +311,37 @@ function renderPacks() {
   $$('button[data-add-generic]').forEach(btn => {
     btn.onclick = () => {
       const id = btn.getAttribute('data-add-generic');
-      const item = store.get('catalogPacks', []).find(i => i.id === id);
+      const item = packs.find(i => i.id === id);
       if (item) addToCart({ id: item.id, title: item.title, price: item.price });
     };
   });
 }
 
-// Render Presets page
 function renderPresets() {
   const grid = $('#presetsGrid');
   if (!grid) return;
 
-  const presets = store.get('catalogPresets', []);
+  const presets = window.serverProducts?.presets || store.get('catalogPresets', []);
 
   grid.innerHTML = presets.map(p => cardSimple({
     ...p,
     subtitle: p.daw || 'FL Studio'
   })).join('');
 
-  $$('button极[data-add-generic]').forEach(btn => {
+  $$('button[data-add-generic]').forEach(btn => {
     btn.onclick = () => {
       const id = btn.getAttribute('data-add-generic');
-      const item = store.get('catalogPresets', []).find(i => i.id === id);
+      const item = presets.find(i => i.id === id);
       if (item) addToCart({ id: item.id, title: item.title, price: item.price });
     };
   });
 }
 
-// Render featured beats on homepage
 function renderFeatured() {
   const grid = $('#featuredBeats');
   if (!grid) return;
 
-  const beats = store.get('catalogBeats', []).slice(0, 3); // First 3 beats
+  const beats = (window.serverProducts?.beats || store.get('catalogBeats', [])).slice(0, 3);
 
   grid.innerHTML = beats.map(b => beatCard({
     ...b,
@@ -299,12 +350,15 @@ function renderFeatured() {
   bindBeatActions();
 }
 
-// Beat Card (detailed)
+/* ==========================
+   CARD COMPONENTS
+========================== */
+
 function beatCard(b) {
   const tags = (b.tags || []).map(t => `<span class="badge">${t}</span>`).join(' ');
   return `
     <div class="card">
-      <img class="w-full h-40 object-cover" src="${b.cover}" alt="${b.title}" 
+      <img class="w-full h-40 object-cover" src="${b.cover}" alt="${b.title}"
            onerror="this.src='https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2'">
       <div class="p-4 space-y-3">
         <div class="flex items-center justify-between">
@@ -316,9 +370,7 @@ function beatCard(b) {
             <p class="text-lg font-semibold">R${b.price}</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          ${tags}
-        </div>
+        <div class="flex items-center gap-2">${tags}</div>
         <div class="flex items-center gap-2">
           <button class="btn play-btn" data-id="${b.id}" data-audio="${b.audio}" data-title="${b.title}"><span>Play</span></button>
           <button class="btn" data-action="add" data-id="${b.id}">Add to Cart</button>
@@ -328,11 +380,10 @@ function beatCard(b) {
   `;
 }
 
-// Simple Card (generic)
 function cardSimple(it) {
   return `
     <div class="card">
-      <img class="w-full h-40 object-cover" src="${it.cover}" alt="${it.title}" 
+      <img class="w-full h-40 object-cover" src="${it.cover}" alt="${it.title}"
            onerror="this.src='https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2'">
       <div class="p-4 space-y-3">
         <h3 class="font-medium">${it.title}</h3>
@@ -346,7 +397,10 @@ function cardSimple(it) {
   `;
 }
 
-// Bind beat actions (play and add to cart)
+/* ==========================
+   EVENT BINDING
+========================== */
+
 function bindBeatActions() {
   // Play buttons
   $$('.play-btn').forEach(btn => {
@@ -368,22 +422,21 @@ function bindBeatActions() {
   });
 }
 
-// Cart functionality
+/* ==========================
+   CART FUNCTIONS
+========================== */
+
 function addToCart(item) {
   const cart = store.get('cart', []);
   cart.push(item);
   store.set('cart', cart);
   cartCount();
-  
-  // Show confirmation
   alert(`Added "${item.title}" to cart!`);
 }
 
 function cartCount() {
   const count = store.get('cart', []).length;
-  $$('#cartCount').forEach(el => {
-    el.textContent = count;
-  });
+  $$('#cartCount').forEach(el => el.textContent = count);
 }
 
 function renderCart() {
@@ -414,7 +467,6 @@ function renderCart() {
     total.textContent = `R${cartTotal.toFixed(2)}`;
   }
 
-  // Bind remove buttons
   $$('button[data-remove]').forEach(btn => {
     btn.onclick = () => {
       const index = parseInt(btn.getAttribute('data-remove'));
@@ -427,7 +479,10 @@ function renderCart() {
   });
 }
 
-// Upload form
+/* ==========================
+   UPLOAD FORM
+========================== */
+
 function setupUpload() {
   const form = $('#uploadForm');
   if (!form) return;
@@ -463,83 +518,5 @@ function setupUpload() {
     const storeKey = keyMap[type];
     if (storeKey) {
       const items = store.get(storeKey, []);
-      items.push(newItem);
-      store.set(storeKey, items);
-    }
+      items.push(new
 
-    alert(`Uploaded "${title}" successfully!`);
-    form.reset();
-  };
-}
-
-// Initialize page based on current page
-function initPage() {
-  initCatalog();
-  cartCount();
-
-  if ($('#beatsGrid')) renderBeats();
-  if ($('#musicGrid')) renderMusic();
-  if ($('#packsGrid')) renderPacks();
-  if ($('#presetsGrid')) renderPresets();
-  if ($('#featuredBeats')) renderFeatured();
-  if ($('#cartList')) renderCart();
-  if ($('#uploadForm')) setupUpload();
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initPage);
-[file content end]
-
-[file name]: style.css
-[file content begin]
-/* Global styles */
-.card {
-  @apply rounded-2xl border border-neutral-800 overflow-hidden bg-neutral-900/50 backdrop-blur transition-all hover:border-neutral-700;
-}
-
-.btn {
-  @apply px-3 py-2 rounded-xl border border-neutral-800 text-sm transition-all hover:bg-neutral-800 hover:border-neutral-700;
-}
-
-.btn.playing {
-  @apply bg-emerald-400/10 border-emerald-400/30 text-emerald-400;
-}
-
-.badge {
-  @apply px-2 py-1 text-xs rounded-full bg-neutral-800 text-neutral-400;
-}
-
-/* Audio player styles */
-.audio-player {
-  width: 100%;
-  height: 4px;
-  background: #333;
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.audio-progress {
-  height: 100%;
-  background: #10b981;
-  width: 0%;
-  transition: width 0.1s linear;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #404040;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #525252;
-}
