@@ -287,7 +287,7 @@ function renderMusic() {
   const q = $('#searchMusic');
   const s = $('#sortMusic');
 
-  const apply = () {
+  const apply = () => {
     let list = [...music];
     const term = (q?.value || '').toLowerCase();
 
