@@ -1,5 +1,3 @@
-[file name]: upload.php
-[file content begin]
 <?php
 // Simple authentication
 $password = 'xaudiXdx12@';
@@ -72,4 +70,3 @@ try {
     echo json_encode(['error' => $e->getMessage()]);
 }
 ?>
-[file content end]
