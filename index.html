@@ -10,33 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .categories-dropdown {
-      position: relative;
-    }
-    .categories-dropdown .dropdown-menu {
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: all 0.2s ease;
-    }
-    .categories-dropdown:hover .dropdown-menu,
-    .categories-dropdown.open .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    @media (max-width: 767px) {
-      .categories-dropdown .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        margin-top: 0.5rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="bg-neutral-950 text-neutral-100 font-[Geist]">
 <header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
@@ -57,9 +31,8 @@
           <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
         </div>
       </div>
-      <a class="hover:text-emerald-400" href="upload.html">Upload</a>
-      <a class="hover:text-emerald-400" href="checkout.html">Cart</a>
       <a class="hover:text-emerald-400" href="admin-upload.html">Admin</a>
+      <a class="hover:text-emerald-400" href="checkout.html">Cart</a>
     </nav>
     <div class="md:hidden flex items-center gap-4">
       <div class="categories-dropdown relative">
@@ -84,19 +57,22 @@
   <section class="py-16 md:py-24">
     <div class="grid md:grid-cols-2 items-center gap-10">
       <div>
-        <h1 class="text-4xl md:text-6xl font-semibold leading-tight">High‑Quality Beats & Samples<br><span class="text-emerald-400">For Modern Artists</span></h1>
+        <h1 class="text-4极 md:text-6xl font-semibold leading-tight">High‑Quality Beats & Samples<br><span class="text-emerald-400">For Modern Artists</span></h1>
         <p class="mt-4 text-neutral-400 max-w-prose">Browse hand‑crafted beats, royalty‑free sample packs and studio‑ready vocal presets. Preview instantly and build your cart — all in your browser.</p>
         <div class="mt-6 flex gap-3">
           <a href="beats.html" class="px-5 py-3 rounded-xl bg-emerald-400 text-neutral-900 font-medium">Browse Beats</a>
-          <a href="sample-packs.html" class="px-5 py-3 rounded-xl border border-neutral-800">Sample Packs</a>
+          <a href="sample-packs.html"极="px-5 py-3 rounded-xl border border-neutral-800">Sample Packs</a>
         </div>
       </div>
       <div class="relative">
         <div class="aspect-video rounded-2xl overflow-hidden border border-neutral-800">
-          <img class="w-full h-full object-cover" src="https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=1280&h=720&dpr=2" alt="Studio"/>
+          <img class="w-full h-full object-cover" src="https://images.pexels极com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=1280&h=720&dpr=2" alt="Studio"/>
         </div>
         <div class="absolute -bottom-6 -left-6 bg-neutral-900/70 backdrop-blur border border-neutral-800 rounded-2xl p-4">
           <p class="text-sm">Now playing: <span id="nowPlaying">—</span></p>
+          <div class="progress-bar mt-2">
+            <div id="audioProgress" class="progress-fill"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -120,15 +96,15 @@
       </div>
       <div class="rounded-2xl border border-neutral-800 p-6">
         <h3 class="font-medium">One‑Click Preview</h3>
-        <p class="text-neutral-400 mt-2 text-sm">Lightning‑fast inline previews with waveform progress.</p>
+        <p class="text-neutral-400极t-2 text-sm">Lightning‑fast inline previews with waveform progress.</p>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="border-t border-neutral-800 mt-20">
-  <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+  <div class="max-w-6xl mx-auto px极4 py-10 text-sm text-neutral-400">
+    <div class="flex flex-col md:极lex-row items-center justify-between gap-4">
       <p>© <span id="year"></span> Drex. All rights reserved.</p>
       <div class="flex items-center gap-4">
         <a class="hover:text-emerald-400" href="index.html">Home</a>
