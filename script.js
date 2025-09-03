@@ -21,21 +21,27 @@ document.addEventListener('DOMContentLoaded', function() {
         loadMusic();
     }
     
-    if (document.getElementById('samplePacksGrid')) {
+    if (document.getElementById('packsGrid')) {
         loadSamplePacks();
     }
     
-    if (document.getElementById('vocalPresetsGrid')) {
+    if (document.getElementById('presetsGrid')) {
         loadVocalPresets();
     }
     
-    if (document.getElementById('cartItems')) {
+    if (document.getElementById('cartList')) {
         loadCartItems();
         updateCartTotal();
     }
     
     // Set up event listeners
     setupEventListeners();
+    
+    // Setup checkout button if exists
+    const payBtn = document.getElementById('payBtn');
+    if (payBtn) {
+        payBtn.addEventListener('click', checkout);
+    }
 });
 
 // Load cart from localStorage
@@ -55,17 +61,22 @@ function saveCartToStorage() {
 function updateCartCount() {
     const cartCountElements = document.querySelectorAll('#cartCount');
     cartCountElements.forEach(element => {
-        element.textContent = cart.length;
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        element.textContent = totalItems;
     });
 }
 
 // Setup event listeners
 function setupEventListeners() {
     // Search functionality
-    const searchInputs = document.querySelectorAll('input[type="text"][id$="Search"]');
+    const searchInputs = document.querySelectorAll('input[type="text"][id$="Search"], #searchBeats, #searchMusic, #searchPacks, #searchPresets');
     searchInputs.forEach(input => {
         input.addEventListener('input', function() {
-            filterProducts(this.value, this.id.replace('Search', ''));
+            const id = this.id;
+            if (id.includes('Beats')) filterAndSortProducts('beats');
+            else if (id.includes('Music')) filterAndSortProducts('music');
+            else if (id.includes('Packs')) filterAndSortProducts('sample-packs');
+            else if (id.includes('Presets')) filterAndSortProducts('vocal-presets');
         });
     });
     
@@ -73,7 +84,11 @@ function setupEventListeners() {
     const sortSelects = document.querySelectorAll('select[id^="sort"]');
     sortSelects.forEach(select => {
         select.addEventListener('change', function() {
-            sortProducts(this.value, this.id.replace('sort', '').toLowerCase());
+            const id = this.id;
+            if (id.includes('Beats')) filterAndSortProducts('beats');
+            else if (id.includes('Music')) filterAndSortProducts('music');
+            else if (id.includes('Packs')) filterAndSortProducts('sample-packs');
+            else if (id.includes('Presets')) filter极SortProducts('vocal-presets');
         });
     });
 }
@@ -131,7 +146,7 @@ function loadMusic() {
 
 // Load sample packs
 function loadSamplePacks() {
-    const samplePacksGrid = document.getElementById('samplePacksGrid');
+    const samplePacksGrid = document.getElementById('packsGrid');
     const samplePacks = getProductsByCategory('sample-packs');
     
     if (samplePacks.length === 0) {
@@ -147,7 +162,7 @@ function loadSamplePacks() {
 
 // Load vocal presets
 function loadVocalPresets() {
-    const vocalPresetsGrid = document.getElementById('vocalPresetsGrid');
+    const vocalPresetsGrid = document.getElementById('presetsGrid');
     const vocalPresets = getProductsByCategory('vocal-presets');
     
     if (vocalPresets.length === 0) {
@@ -155,7 +170,7 @@ function loadVocalPresets() {
         return;
     }
     
-    vocalPresetsGrid.innerHTML = vocalPresets.map(preset => createProductCard(preset)).join('');
+    vocalPresets极.innerHTML = vocalPresets.map(preset => createProductCard(preset)).join('');
     
     // Initialize audio players
     initAudioPlayers();
@@ -315,7 +330,10 @@ function addToCart(productId) {
         existingItem.quantity += 1;
     } else {
         cart.push({
-            ...product,
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            cover: product.cover,
             quantity: 1
         });
     }
@@ -330,7 +348,7 @@ function addToCart(productId) {
 
 // Load cart items on checkout page
 function loadCartItems() {
-    const cartItemsContainer = document.getElementById('cartItems');
+    const cartItemsContainer = document.getElementById('cartList');
     
     if (cart.length === 0) {
         cartItemsContainer.innerHTML = '<p class="text-neutral-400 py-8 text-center">Your cart is empty.</p>';
@@ -338,7 +356,7 @@ function loadCartItems() {
     }
     
     cartItemsContainer.innerHTML = cart.map(item => `
-        <div class="cart-item flex items-center justify-between gap-4">
+        <div class="cart-item flex items-center justify-between gap-4 py-4 border-b border-neutral-800">
             <div class="flex items-center gap-4">
                 <img src="${item.cover}" alt="${item.title}" class="w-16 h-16 object-cover rounded-xl">
                 <div>
@@ -412,66 +430,70 @@ function updateCartTotal() {
     totalElement.textContent = `R${total.toFixed(2)}`;
 }
 
-// Filter products
-function filterProducts(query, category) {
-    const grid = document.getElementById(`${category}Grid`);
+// Filter and sort products
+function filterAndSortProducts(category) {
+    const grid = document.getElementById(`${category === 'sample-packs' ? 'packs' : category === 'vocal-presets' ? 'presets' : category}Grid`);
     if (!grid) return;
     
-    const products = getProductsByCategory(category);
-    const filteredProducts = products.filter(product => 
-        product.title.toLowerCase().includes(query.toLowerCase()) ||
-        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
-    );
+    const searchInput = document.getElementById(`search${category === 'sample-packs' ? 'Packs' : category === 'vocal-presets' ? 'Presets' : category.charAt(0).toUpperCase() + category.slice(1)}`);
+    const sortSelect = document.getElementById(`sort${category === 'sample-packs' ? 'Packs' : category === 'vocal-presets' ? 'Presets' : category.charAt(0).toUpperCase() + category.slice(1)}`);
     
-    grid.innerHTML = filteredProducts.length > 0 
-        ? filteredProducts.map(product => createProductCard(product)).join('')
-        : '<p class="text-neutral-400">No products found.</p>';
+    if (!searchInput || !sortSelect) return;
     
-    initAudioPlayers();
-}
-
-// Sort products
-function sortProducts(sortBy, category) {
-    const grid = document.getElementById(`${category}Grid`);
-    if (!grid) return;
+    const query = searchInput.value.toLowerCase();
+    const sortBy = sortSelect.value;
     
     let products = getProductsByCategory(category);
     
+    // Filter products
+    let filteredProducts = products.filter(product => 
+        product.title.toLowerCase().includes(query) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query)))
+    );
+    
+    // Sort products
     switch(sortBy) {
         case 'price-low':
-            products.sort((a, b) => a.price - b.price);
+        case 'priceLow':
+            filteredProducts.sort((a, b) => a.price - b.price);
             break;
         case 'price-high':
-            products.sort((a, b) => b.price - a.price);
+        case 'priceHigh':
+            filteredProducts.sort((a, b) => b.price - a.price);
             break;
         case 'newest':
+        case 'new':
         default:
-            products.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+            filteredProducts.sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
             break;
     }
     
-    grid.innerHTML = products.map(product => createProductCard(product)).join('');
+    grid.innerHTML = filteredProducts.length > 0 
+        ? filteredProducts.map(product => createProductCard(product)).join('')
+        : '<p class="text-neutral-400 col-span-full text-center py-12">No products found.</p>';
+    
     initAudioPlayers();
 }
 
-// Checkout functionality
+// Checkout process
 function checkout() {
     if (cart.length === 0) {
         alert('Your cart is empty!');
         return;
     }
     
-    // In a real application, this would redirect to a payment processor
-    alert('Thank you for your purchase! This is a demo - no real payment was processed.');
+    // In a real application, this would integrate with a payment processor
+    // For this demo, we'll just show a success message and clear the cart
     
-    // Clear cart
+    alert('Thank you for your purchase! Your download links will be sent to your email.');
+    
+    // Clear the cart
     cart = [];
     saveCartToStorage();
     updateCartCount();
     
-    // Reload cart page if we're on it
-    if (document.getElementById('cartItems')) {
-        loadCartItems();
-        updateCartTotal();
-    }
+    // Redirect to homepage after a short delay
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 2000);
 }
