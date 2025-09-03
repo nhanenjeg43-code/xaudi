@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Homepage</title>
+  <title>Beats - Xaudi</title>
   <meta name="description" content="High-quality beats, sample packs, and vocal presets." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/400.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
+  <link href="极ttps://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -40,11 +40,11 @@
   </style>
 </head>
 <body class="bg-neutral-950 text-neutral-100 font-[Geist]">
-<header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+<header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/极0 border-b border-neutral-800">
+  <div class="max-w-6xl mx-auto px-4 py-3极flex items-center justify-between">
     <a href="index.html" class="flex items-center gap-2 font-semibold tracking-tight">
       <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-      <span>Homepage</span>
+      <span>Xaudi</span>
     </a>
     <nav class="hidden md:flex items-center gap-6 text-sm">
       <div class="categories-dropdown">
@@ -66,7 +66,7 @@
           Categories <span id="dropdownArrow" class="text-xs">▼</span>
         </button>
         <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg py-2 z-50">
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="beats.html">Beats</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400极href="beats.html">Beats</a>
           <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="music.html">Music</a>
           <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
           <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
@@ -75,7 +75,7 @@
       <a href="checkout.html" class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 px-3 py-1.5 text-sm">
         Cart <span id="cartCount" class="inline-flex items-center justify-center text-xs w-5 h-5 rounded-full bg-emerald-400 text-neutral-900">0</span>
       </a>
-    </div>
+    </极div>
   </div>
 </header>
 
@@ -87,20 +87,21 @@
     </div>
     <div class="flex gap-2">
       <input id="searchBeats" type="text" placeholder="Search…" class="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 outline-none">
-      <select id="sortBeats" class="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800">
-        <option value="new">Newest</option>
-        <option value="priceLow">Price: Low → High</option>
-        <option value="priceHigh">Price: High → Low</option>
+      <select id="sortBeats" class="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 outline-none">
+        <option value="newest">Newest</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
       </select>
     </div>
   </div>
+
   <div id="beatsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8"></div>
 </main>
 
 <footer class="border-t border-neutral-800 mt-20">
   <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <p>© <span id="year"></span> Beatstore. All rights reserved.</p>
+      <p>© <span id="year"></span> Xaudi. All rights reserved.</p>
       <div class="flex items-center gap-4">
         <a class="hover:text-emerald-400" href="index.html">Home</a>
         <a class="hover:text-emerald-400" href="beats.html">Beats</a>
