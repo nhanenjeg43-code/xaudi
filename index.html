@@ -1,166 +1,142 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Xaudi</title>
-  <meta name="description" content="High-quality beats, sample packs, and vocal presets." />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/极00.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xaudi - Premium Beats & Sounds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-neutral-950 text-neutral-100 font-[Geist]">
-<header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-2 font-semibold tracking-tight">
-      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-      <span>Xaudi</span>
-    </a>
-    <nav class="hidden md:flex items-center gap-6 text-sm">
-      <div class="categories-dropdown">
-        <button class="hover:text-emerald-400 flex items-center gap-1">
-          Categories <span class="text-xs">▼</span>
-        </button>
-        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg py-2">
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="beats.html">Beats</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="music.html">Music</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+<body class="bg-neutral-950 text-neutral-100">
+    <!-- Navigation -->
+    <nav class="navbar px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <a href="index.html" class="text-xl font-bold text-white">Xaudi</a>
+            <div class="navbar-menu hidden md:flex items-center gap-6">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="beats.html" class="nav-link">Beats</a>
+                <a href="music.html" class="nav-link">Music</a>
+                <a href="sample-packs.html" class="nav-link">Sample Packs</a>
+                <a href="vocal-presets.html" class="nav-link">Vocal Presets</a>
+            </div>
         </div>
-      </div>
-      <a class="hover:text-emerald-400" href="admin-upload.html">Admin</a>
-      <a class="hover:text-emerald-400" href="checkout.html">Cart</极>
+        <div class="flex items-center gap-4">
+            <a href="cart.html" class="relative p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span id="cartCount" class="absolute -top-1 -right-1 bg-emerald-600 text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+            </a>
+            <a href="admin-upload.html" class="text-sm text-neutral-400 hover:text-white">Admin</a>
+        </div>
     </nav>
-    <div class="md:hidden flex items-center gap-4">
-      <div class="categories-dropdown relative">
-        <button id="mobileCategoriesToggle" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl border border-neutral-800">
-          Categories <span id="dropdownArrow" class="text-xs">▼</span>
-        </button>
-        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg py-2 z-50">
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="beats.html">Beats</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="music.html">Music</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
-          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
-        </div>
-      </div>
-      <a href="checkout.html" class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 px-3 py-1.5 text-sm">
-        Cart <span id="cartCount" class="inline-flex items-center justify-center text-xs w-5 h-5 rounded-full bg-emerald-400 text-neutral-900">0</span>
-      </a>
-    </div>
-  </div>
-</header>
 
-<main class="max-w-6xl mx-auto px-4">
-  <section class="py-16 md:py-24">
-    <div class="grid md:grid-cols-2 items-center gap-10">
-      <div>
-        <h1 class="text-4xl md:text-6xl font-semibold leading-tight">High-Quality Beats & Samples<br><span class="text-emerald-400">For Modern Artists</span></h1>
-        <p class="mt-4 text-neutral-400 max-w-prose">Browse hand-crafted beats, royalty-free sample packs and studio-ready vocal presets. Preview instantly and build your cart — all in your browser.</p>
-        <div class="mt-6 flex gap-3">
-          <a href="beats.html" class="px-5 py-3 rounded-xl bg-emerald-400 text-neutral-900 font-medium">Browse Beats</a>
-          <a href="sample-packs.html" class="px-5 py-3 rounded-xl border border-neutral-800">Sample Packs</a>
+    <!-- Hero Section -->
+    <section class="hero px-6">
+        <div class="hero-content mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">Premium <span class="text-emerald">Beats</span> & Sounds</h1>
+            <p class="text-lg text-neutral-400 mb-8">Discover exclusive beats, sample packs, and vocal presets crafted by top producers. Elevate your music with Xaudi.</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="beats.html" class="btn">Browse Beats</a>
+                <a href="sample-packs.html" class="btn btn-secondary">Explore Samples</a>
+            </div>
         </div>
-      </div>
-      <div class="relative">
-        <div class="aspect-video rounded-2xl overflow-hidden border border-neutral-800">
-          <img class="w-full h-full object-cover" src="https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=1280&h=720&dpr=2" alt="Studio"/>
+    </section>
+
+    <!-- Featured Beats -->
+    <section class="py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold">Featured Beats</h2>
+                <a href="beats.html" class="text-emerald-400 hover:text-emerald-300">View all →</a>
+            </div>
+            <div id="featuredBeats" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Beats will be loaded here by JavaScript -->
+                <div class="text-center py-12 text-neutral-400">Loading beats...</div>
+            </div>
         </div>
-        <div class="absolute -bottom-6 -left-6 bg-neutral-900/70 backdrop-blur border border-neutral-800 rounded-2xl p-4">
-          <class="text-sm">Now playing: <span id="nowPlaying">—</span></p>
-          <div class="progress-bar mt-2">
-            <div id="audioProgress" class="progress-fill"></div>
-          </div>
+    </section>
+
+    <!-- Now Playing Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-neutral-900 border-t border-neutral-800 p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-neutral-800 rounded"></div>
+                <div>
+                    <p class="text-sm text-neutral-400">Now Playing</p>
+                    <p id="nowPlaying" class="font-medium">—</p>
+                </div>
+            </div>
+            <div class="flex-1 max-w-md mx-6">
+                <div class="w-full bg-neutral-800 rounded-full h-1.5">
+                    <div id="audioProgress" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="prevBtn" class="p-2 text-neutral-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button id="playPauseBtn" class="p-2 text-neutral-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </button>
+                <button id="nextBtn" class="p-2 text-neutral-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
 
-  <section class="py-10">
-    <h2 class="text-2xl font-semibold mb-6">Featured Beats</h2>
-    <div id="featuredBeats" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-  </section>
+    <!-- Footer -->
+    <footer class="bg-neutral-900 border-t border-neutral-800 py-12 px-6 mt-16">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">Xaudi</h3>
+                <p class="text-neutral-400">Premium beats, samples, and presets for music producers.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Products</h4>
+                <ul class="space-y-2">
+                    <li><a href="beats.html" class="text-neutral-400 hover:text-white">Beats</a></li>
+                    <li><a href="music.html" class="text-neutral-400 hover:text-white">Music</a></li>
+                    <li><a href="sample-packs.html" class="text-neutral-400 hover:text-white">Sample Packs</a></li>
+                    <li><a href="vocal-presets.html" class="text-neutral-400 hover:text-white">Vocal Presets</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Company</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-neutral-400 hover:text-white">About</a></li>
+                    <li><a href="#" class="text-neutral-400 hover:text-white">Contact</a></li>
+                    <li><a href="#" class="text-neutral-400 hover:text-white">Licensing</a></li>
+                    <li><a href="#" class="text-neutral-400 hover:text-white">Terms</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Connect</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="text-neutral-400 hover:text-white">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="#" class="text-neutral-400 hover:text-white">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-8 pt-8 border-t border-neutral-800 text-center text-neutral-500">
+            <p>&copy; 2023 Xaudi. All rights reserved.</p>
+        </div>
+    </footer>
 
-  <section class="py-10">
-    <h2 class="text-2xl font-semib极d mb-6">Why Choose Us</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="rounded-2xl border border-neutral-800 p-6">
-        <h3 class="font-medium">Studio Quality</h3>
-        <p class="text-neutral-400 mt-2 text-sm">Curated catalog mixed and mastered for instant radio-ready results.</p>
-      </div>
-      <div class="rounded-2xl border border-neutral-800 p-6">
-        <h3 class="font-medium">Royalty-Free</h3>
-        <p class="text-neutral-400 mt-2 text-sm">Use in your projects with clear licensing. No headaches.</p>
-      </div>
-      <div class="rounded-2xl border border-neutral-800 p-6">
-        <h3 class="font-medium">One-Click Preview</h3>
-        <p class="text-neutral-400 mt-2 text-sm">Lightning-fast inline previews with waveform progress.</p>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="border-t border-neutral-800 mt-20">
-  <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <p>© <span id="year"></span> Xaudi. All rights reserved.</p>
-      <div class="flex items-center gap-4">
-        <a class="hover:text-emerald-400" href="index.html">Home</a>
-        <a class="hover:text-emerald-400" href="beats.html">Beats</a>
-        <a class="hover:text-emerald-400" href="sample-packs.html">Samples</a>
-        <a class="hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
-      </div>
-    </div>
-  </div>
-</footer>
-<script>
-  // Mobile dropdown toggle functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const mobileToggle = document.getElementById('mobileCategoriesToggle');
-    const dropdownArrow = document.getElementById('dropdownArrow');
-    
-    if (mobileToggle) {
-      mobileToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const dropdown = this.closest('.categories-dropdown');
-        const isOpening = !dropdown.classList.contains('open');
-        
-        // Close any other open dropdowns
-        document.querySelectorAll('.categories-dropdown.open').forEach(item => {
-          if (item !== dropdown) {
-            item.classList.remove('open');
-          }
-        });
-        
-        // Toggle this dropdown
-        dropdown.classList.toggle('open');
-        
-        // Update arrow direction
-        if (dropdownArrow) {
-          dropdownArrow.textContent = dropdown.classList.contains('open') ? '▲' : '▼';
-        }
-      });
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      const dropdowns = document.querySelectorAll('.categories-dropdown');
-      dropdowns.forEach(dropdown => {
-        if (!dropdown.contains(e.target)) {
-          dropdown.classList.remove('open');
-          if (dropdownArrow) {
-            dropdownArrow.textContent = '▼';
-          }
-        }
-      });
-    });
-    
-    // Set current year in footer
-    document.getElementById('year').textContent = new Date().getFullYear();
-  });
-</script>
-<script src="script.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
