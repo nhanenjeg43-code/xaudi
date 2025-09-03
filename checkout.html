@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homepage</title>
+  <meta name="description" content="High-quality beats, sample packs, and vocal presets." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/400.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-neutral-950 text-neutral-100 font-[Geist]">
+<header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2 font-semibold tracking-tight">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+      <span>Homepage</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+      <a class="hover:text-emerald-400" href="beats.html">Beats</a>
+      <a class="hover:text-emerald-400" href="music.html">Music</a>
+      <a class="hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
+      <a class="hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+      <a class="hover:text-emerald-400" href="checkout.html">Cart</a>
+    </nav>
+    <a href="checkout.html" class="md:hidden inline-flex items-center gap-2 rounded-xl border border-neutral-800 px-3 py-1.5 text-sm">
+      Cart <span id="cartCount" class="inline-flex items-center justify-center text-xs w-5 h-5 rounded-full bg-emerald-400 text-neutral-900">0</span>
+    </a>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-3xl md:text-4xl font-semibold">Checkout</h1>
+  <p class="text-neutral-400 mt-1 mb-8">Cart is stored in your browser only.</p>
+  <div id="cartList" class="space-y-3"></div>
+  <div class="mt-6 flex items-center justify-between border-t border-neutral-800 pt-4">
+    <span class="text-neutral-400">Total</span>
+    <span id="cartTotal" class="text-2xl font-semibold">R0</span>
+  </div>
+  <button id="payBtn" class="mt-6 px-5 py-3 rounded-xl bg-emerald-400 text-neutral-900 font-medium w-full md:w-auto">Pay Now (Demo)</button>
+</main>
+
+<footer class="border-t border-neutral-800 mt-20">
+  <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <p>© <span id="year"></span> Beatstore. All rights reserved.</p>
+      <div class="flex items-center gap-4">
+        <a class="hover:text-emerald-400" href="index.html">Home</a>
+        <a class="hover:text-emerald-400" href="beats.html">Beats</a>
+        <a class="hover:text-emerald-400" href="sample-packs.html">Samples</a>
+        <a class="hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
