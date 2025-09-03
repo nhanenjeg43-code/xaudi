@@ -1,520 +1,477 @@
-/* ==========================
-   UTILITY FUNCTIONS
-========================== */
-
-// Local storage helper
-const store = {
-  get: (key, fallback = []) => {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : fallback;
-    } catch (e) {
-      return fallback;
-    }
-  },
-  set: (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-};
-
-// DOM selectors
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
-
-/* ==========================
-   SEED DATA
-========================== */
-
-const seedBeats = [
-  {
-    id: 'beat-1',
-    title: 'Midnight Vibes',
-    price: 29.99,
-    cover: 'https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    audio: 'assets/audio/silence.wav',
-    bpm: 85,
-    key: 'Cmin',
-    tags: ['Trap', 'Dark', 'HipHop'],
-    downloadLink: 'https://drive.google.com/example1'
-  },
-  {
-    id: 'beat-2',
-    title: 'Summer Dreams',
-    price: 24.99,
-    cover: 'https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    audio: 'assets/audio/silence.wav',
-    bpm: 95,
-    key: 'Fmaj',
-    tags: ['Pop', 'Chill', 'Summer'],
-    downloadLink: 'https://drive.google.com/example2'
-  },
-  {
-    id: 'beat-3',
-    title: 'Urban Flow',
-    price: 34.99,
-    cover: 'https://images.pexels.com/photos/164837/pexels-photo-164837.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    audio: 'assets/audio/silence.wav',
-    bpm: 75,
-    key: 'Gmin',
-    tags: ['R&B', 'Soul', 'Urban'],
-    downloadLink: 'https://drive.google.com/example3'
-  }
-];
-
-const seedPacks = [
-  {
-    id: 'pack-1',
-    title: 'Drum Kit Vol. 1',
-    price: 19.99,
-    cover: 'https://images.pexels.com/photos/414999/pexels-photo-414999.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    files: 120,
-    downloadLink: 'https://drive.google.com/example4'
-  },
-  {
-    id: 'pack-2',
-    title: 'Synth Essentials',
-    price: 24.99,
-    cover: 'https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    files: 80,
-    downloadLink: 'https://drive.google.com/example5'
-  }
-];
-
-const seedPresets = [
-  {
-    id: 'preset-1',
-    title: 'Vocal Chain Pro',
-    price: 14.99,
-    cover: 'https://images.pexels.com/photos/166094/pexels-photo-166094.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    daw: 'FL Studio',
-    downloadLink: 'https://drive.google.com/example6'
-  },
-  {
-    id: 'preset-2',
-    title: 'R&B Vocal Master',
-    price: 19.99,
-    cover: 'https://images.pexels.com/photos/166093/pexels-photo-166093.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2',
-    daw: 'Ableton',
-    downloadLink: 'https://drive.google.com/example7'
-  }
-];
-
-/* ==========================
-   STATE VARIABLES
-========================== */
-
+// Global variables
+let cart = [];
 let currentAudio = null;
-let currentPlayingId = null;
-let progressInterval = null;
+let currentAudioElement = null;
 
-/* ==========================
-   DATA LOADING
-========================== */
-
-// Load products from localStorage
-function loadProducts() {
-  // First try to load from the new catalogProducts system
-  const allProducts = store.get('catalogProducts', []);
-  
-  if (allProducts.length > 0) {
-    // If we have products from the new system, organize them by category
-    const beats = allProducts.filter(p => p.category === 'beats');
-    const music = allProducts.filter(p => p.category === 'music');
-    const packs = allProducts.filter(p => p.category === 'sample-packs');
-    const presets = allProducts.filter(p => p.category === 'vocal-presets');
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    loadCartFromStorage();
+    updateCartCount();
     
-    return { beats, packs, presets, music };
-  }
-  
-  // Fall back to the old system if no products in new system
-  const beats = store.get('catalogBeats', seedBeats);
-  const packs = store.get('catalogPacks', seedPacks);
-  const presets = store.get('catalogPresets', seedPresets);
-  const music = store.get('catalogMusic', seedBeats);
-  
-  return { beats, packs, presets, music };
-}
-
-// Load products from server.json
-async function loadProductsFromServer() {
-  try {
-    const response = await fetch('products.json');
-    if (!response.ok) throw new Error('Failed to load products');
-
-    const products = await response.json();
-
-    return {
-      beats: products.filter(p => p.category === 'beats'),
-      music: products.filter(p => p.category === 'music'),
-      packs: products.filter(p => p.category === 'sample-packs'),
-      presets: products.filter(p => p.category === 'vocal-presets')
-    };
-  } catch (error) {
-    console.error('Error loading products:', error);
-    return loadProducts(); // fallback
-  }
-}
-
-/* ==========================
-   CATALOG INITIALIZATION
-========================== */
-
-function initCatalog() {
-  if (!store.get('catalogBeats')) store.set('catalogBeats', seedBeats);
-  if (!store.get('catalogPacks')) store.set('catalogPacks', seedPacks);
-  if (!store.get('catalogPresets')) store.set('catalogPresets', seedPresets);
-  if (!store.get('catalogMusic')) store.set('catalogMusic', seedBeats);
-}
-
-/* ==========================
-   AUDIO PLAYER FUNCTIONS
-========================== */
-
-function playPreview(id, audioUrl, title) {
-  const progressBar = $('#audioProgress');
-
-  // Stop current audio if playing
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-    clearInterval(progressInterval);
-
-    // Reset previous play button
-    if (currentPlayingId) {
-      const prevBtn = $(`button[data-id="${currentPlayingId}"]`);
-      if (prevBtn) {
-        prevBtn.innerHTML = '<span>Play</span>';
-        prevBtn.classList.remove('playing');
-      }
+    // Load products based on current page
+    if (document.getElementById('featuredBeats')) {
+        loadFeaturedBeats();
     }
-  }
-
-  // Stop if clicking the same button
-  if (currentPlayingId === id) {
-    currentPlayingId = null;
-    updateNowPlaying('—');
-    if (progressBar) progressBar.style.width = '0%';
-    return;
-  }
-
-  // Update now playing
-  updateNowPlaying(title);
-
-  // Play new audio
-  currentAudio = new Audio(audioUrl);
-  currentPlayingId = id;
-
-  const playBtn = $(`button[data-id="${id}"]`);
-  if (playBtn) {
-    playBtn.innerHTML = '<span>Stop</span>';
-    playBtn.classList.add('playing');
-  }
-
-  currentAudio.play();
-
-  // Update progress bar
-  if (progressBar) {
-    progressBar.style.width = '0%';
-    progressInterval = setInterval(() => {
-      if (currentAudio && currentAudio.duration > 0) {
-        const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
-        progressBar.style.width = percent + '%';
-      }
-    }, 100);
-  }
-
-  currentAudio.onended = () => {
-    if (playBtn) {
-      playBtn.innerHTML = '<span>Play</span>';
-      playBtn.classList.remove('playing');
+    
+    if (document.getElementById('beatsGrid')) {
+        loadBeats();
     }
-    currentPlayingId = null;
-    updateNowPlaying('—');
-    if (progressBar) progressBar.style.width = '0%';
-    clearInterval(progressInterval);
-    currentAudio = null;
-  };
-}
-
-function updateNowPlaying(title) {
-  const nowPlaying = $('#nowPlaying');
-  if (nowPlaying) nowPlaying.textContent = title;
-}
-
-/* ==========================
-   RENDER FUNCTIONS
-========================== */
-
-function renderBeats() {
-  const grid = $('#beatsGrid');
-  if (!grid) return;
-
-  const products = loadProducts();
-  const beats = window.serverProducts?.beats || products.beats || [];
-  const q = $('#searchBeats');
-  const s = $('#sortBeats');
-
-  const apply = () => {
-    let list = [...beats];
-    const term = (q?.value || '').toLowerCase();
-
-    if (term) {
-      list = list.filter(b =>
-        b.title.toLowerCase().includes(term) ||
-        (b.tags || []).some(t => t.toLowerCase().includes(term))
-      );
+    
+    if (document.getElementById('musicGrid')) {
+        loadMusic();
     }
-
-    if (s?.value === 'priceLow') list.sort((a, b) => a.price - b.price);
-    else if (s?.value === 'priceHigh') list.sort((a, b) => b.price - a.price);
-    else list.reverse(); // newest first
-
-    grid.innerHTML = list.map(beatCard).join('');
-    bindBeatActions();
-  };
-
-  if (q) q.oninput = apply;
-  if (s) s.onchange = apply;
-  apply();
-}
-
-function renderMusic() {
-  const grid = $('#musicGrid');
-  if (!grid) return;
-
-  const products = loadProducts();
-  const music = window.serverProducts?.music || products.music || [];
-  const q = $('#searchMusic');
-  const s = $('#sortMusic');
-
-  const apply = () => {
-    let list = [...music];
-    const term = (q?.value || '').toLowerCase();
-
-    if (term) {
-      list = list.filter(b =>
-        b.title.toLowerCase().includes(term) ||
-        (b.tags || []).some(t => t.toLowerCase().includes(term))
-      );
+    
+    if (document.getElementById('samplePacksGrid')) {
+        loadSamplePacks();
     }
+    
+    if (document.getElementById('vocalPresetsGrid')) {
+        loadVocalPresets();
+    }
+    
+    if (document.getElementById('cartItems')) {
+        loadCartItems();
+        updateCartTotal();
+    }
+    
+    // Set up event listeners
+    setupEventListeners();
+});
 
-    if (s?.value === 'priceLow') list.sort((a, b) => a.price - b.price);
-    else if (s?.value === 'priceHigh') list.sort((a, b) => b.price - a.price);
-    else list.reverse();
-
-    grid.innerHTML = list.map(b => beatCard({
-      ...b,
-      subtitle: `${b.bpm || 120} BPM • ${b.key || 'Cmin'}`
-    })).join('');
-    bindBeatActions();
-  };
-
-  if (q) q.oninput = apply;
-  if (s) s.onchange = apply;
-  apply();
+// Load cart from localStorage
+function loadCartFromStorage() {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+    }
 }
 
-function renderPacks() {
-  const grid = $('#packsGrid');
-  if (!grid) return;
-
-  const products = loadProducts();
-  const packs = window.serverProducts?.packs || products.packs || [];
-
-  grid.innerHTML = packs.map(p => cardSimple({
-    ...p,
-    subtitle: `${p.files || 50} files`
-  })).join('');
-
-  $$('button[data-add-generic]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute('data-add-generic');
-      const item = packs.find(i => i.id === id);
-      if (item) addToCart({ id: item.id, title: item.title, price: item.price });
-    };
-  });
+// Save cart to localStorage
+function saveCartToStorage() {
+    localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-function renderPresets() {
-  const grid = $('#presetsGrid');
-  if (!grid) return;
-
-  const products = loadProducts();
-  const presets = window.serverProducts?.presets || products.presets || [];
-
-  grid.innerHTML = presets.map(p => cardSimple({
-    ...p,
-    subtitle: p.daw || 'FL Studio'
-  })).join('');
-
-  $$('button[data-add-generic]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute('data-add-generic');
-      const item = presets.find(i => i.id === id);
-      if (item) addToCart({ id: item.id, title: item.title, price: item.price });
-    };
-  });
+// Update cart count in the header
+function updateCartCount() {
+    const cartCountElements = document.querySelectorAll('#cartCount');
+    cartCountElements.forEach(element => {
+        element.textContent = cart.length;
+    });
 }
 
-function renderFeatured() {
-  const grid = $('#featuredBeats');
-  if (!grid) return;
-
-  const products = loadProducts();
-  const beats = (window.serverProducts?.beats || products.beats || []).slice(0, 3);
-
-  grid.innerHTML = beats.map(b => beatCard({
-    ...b,
-    subtitle: `${b.bpm || 120} BPM • ${b.key || 'Cmin'}`
-  })).join('');
-  bindBeatActions();
+// Setup event listeners
+function setupEventListeners() {
+    // Search functionality
+    const searchInputs = document.querySelectorAll('input[type="text"][id$="Search"]');
+    searchInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            filterProducts(this.value, this.id.replace('Search', ''));
+        });
+    });
+    
+    // Sort functionality
+    const sortSelects = document.querySelectorAll('select[id^="sort"]');
+    sortSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            sortProducts(this.value, this.id.replace('sort', '').toLowerCase());
+        });
+    });
 }
 
-/* ==========================
-   CARD COMPONENTS
-========================== */
+// Load featured beats on the homepage
+function loadFeaturedBeats() {
+    const featuredContainer = document.getElementById('featuredBeats');
+    const beats = getProductsByCategory('beats');
+    
+    // Show only 3 featured beats
+    const featuredBeats = beats.slice(0, 3);
+    
+    if (featuredBeats.length === 0) {
+        featuredContainer.innerHTML = '<p class="text-neutral-400">No beats available yet.</p>';
+        return;
+    }
+    
+    featuredContainer.innerHTML = featuredBeats.map(beat => createProductCard(beat)).join('');
+    
+    // Initialize audio players for the featured beats
+    initAudioPlayers();
+}
 
-function beatCard(b) {
-  const tags = (b.tags || []).map(t => `<span class="badge">${t}</span>`).join(' ');
-  return `
-    <div class="card">
-      <img class="w-full h-40 object-cover" src="${b.cover}" alt="${b.title}"
-           onerror="this.src='https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2'">
-      <div class="p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="font-medium">${b.title}</h3>
-            <p class="text-xs text-neutral-400">${b.bpm || 120} BPM • ${b.key || 'Cmin'}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-lg font-semibold">R${b.price}</p>
-          </div>
+// Load all beats
+function loadBeats() {
+    const beatsGrid = document.getElementById('beatsGrid');
+    const beats = getProductsByCategory('beats');
+    
+    if (beats.length === 0) {
+        beatsGrid.innerHTML = '<p class="text-neutral-400">No beats available yet.</p>';
+        return;
+    }
+    
+    beatsGrid.innerHTML = beats.map(beat => createProductCard(beat)).join('');
+    
+    // Initialize audio players
+    initAudioPlayers();
+}
+
+// Load music
+function loadMusic() {
+    const musicGrid = document.getElementById('musicGrid');
+    const music = getProductsByCategory('music');
+    
+    if (music.length === 0) {
+        musicGrid.innerHTML = '<p class="text-neutral-400">No music available yet.</p>';
+        return;
+    }
+    
+    musicGrid.innerHTML = music.map(track => createProductCard(track)).join('');
+    
+    // Initialize audio players
+    initAudioPlayers();
+}
+
+// Load sample packs
+function loadSamplePacks() {
+    const samplePacksGrid = document.getElementById('samplePacksGrid');
+    const samplePacks = getProductsByCategory('sample-packs');
+    
+    if (samplePacks.length === 0) {
+        samplePacksGrid.innerHTML = '<p class="text-neutral-400">No sample packs available yet.</p>';
+        return;
+    }
+    
+    samplePacksGrid.innerHTML = samplePacks.map(pack => createProductCard(pack)).join('');
+    
+    // Initialize audio players
+    initAudioPlayers();
+}
+
+// Load vocal presets
+function loadVocalPresets() {
+    const vocalPresetsGrid = document.getElementById('vocalPresetsGrid');
+    const vocalPresets = getProductsByCategory('vocal-presets');
+    
+    if (vocalPresets.length === 0) {
+        vocalPresetsGrid.innerHTML = '<p class="text-neutral-400">No vocal presets available yet.</p>';
+        return;
+    }
+    
+    vocalPresetsGrid.innerHTML = vocalPresets.map(preset => createProductCard(preset)).join('');
+    
+    // Initialize audio players
+    initAudioPlayers();
+}
+
+// Get products by category
+function getProductsByCategory(category) {
+    const categoryKey = `catalog${category.charAt(0).toUpperCase() + category.slice(1).replace('-', '')}`;
+    const products = JSON.parse(localStorage.getItem(categoryKey) || '[]');
+    
+    // If no products in category-specific storage, try the general catalog
+    if (products.length === 0) {
+        const allProducts = JSON.parse(localStorage.getItem('catalogProducts') || '[]');
+        return allProducts.filter(product => product.category === category);
+    }
+    
+    return products;
+}
+
+// Create product card HTML
+function createProductCard(product) {
+    const tagsHtml = product.tags && product.tags.length > 0 
+        ? product.tags.map(tag => `<span class="badge">${tag}</span>`).join('')
+        : '';
+    
+    const details = product.category === 'beats' || product.category === 'music'
+        ? `${product.bpm || '120'} BPM • ${product.key || 'Cmin'}`
+        : product.category === 'vocal-presets'
+        ? product.daw || 'FL Studio'
+        : product.category === 'sample-packs'
+        ? `${product.files || '50'} files`
+        : '';
+    
+    return `
+        <div class="card fade-in" data-id="${product.id}">
+            <img class="w-full h-48 object-cover" src="${product.cover}" alt="${product.title}">
+            <div class="p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-medium">${product.title}</h3>
+                        <p class="text-xs text-neutral-400">${details}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-semibold">R${product.price}</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    ${tagsHtml}
+                </div>
+                
+                <!-- Audio Preview with Waveform -->
+                <div class="mt-3">
+                    <div class="waveform" id="waveform-${product.id}"></div>
+                    <audio class="audio-player" id="audio-${product.id}" src="${product.audio || 'assets/audio/silence.wav'}"></audio>
+                </div>
+                
+                <div class="flex items-center gap-2 pt-2">
+                    <button class="btn add-to-cart" data-id="${product.id}">Add to Cart</button>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-2">${tags}</div>
-        <div class="flex items-center gap-2">
-          <button class="btn play-btn" data-id="${b.id}" data-audio="${b.audio}" data-title="${b.title}"><span>Play</span></button>
-          <button class="btn" data-action="add" data-id="${b.id}">Add to Cart</button>
+    `;
+}
+
+// Initialize audio players and waveforms
+function initAudioPlayers() {
+    // Generate waveforms
+    document.querySelectorAll('.waveform').forEach(waveform => {
+        generateWaveform(waveform);
+    });
+    
+    // Set up audio player event listeners
+    document.querySelectorAll('.audio-player').forEach(audioElement => {
+        audioElement.addEventListener('play', function() {
+            // Pause any currently playing audio
+            if (currentAudio && currentAudio !== this) {
+                currentAudio.pause();
+            }
+            currentAudio = this;
+            currentAudioElement = this;
+            
+            // Update now playing text on homepage
+            if (document.getElementById('nowPlaying')) {
+                const productId = this.id.replace('audio-', '');
+                const productCard = document.querySelector(`[data-id="${productId}"]`);
+                if (productCard) {
+                    const productTitle = productCard.querySelector('h3').textContent;
+                    document.getElementById('nowPlaying').textContent = productTitle;
+                }
+            }
+        });
+        
+        audioElement.addEventListener('timeupdate', function() {
+            // Update progress bar on homepage
+            if (this === currentAudio && document.getElementById('audioProgress')) {
+                const progress = (this.currentTime / this.duration) * 100;
+                document.getElementById('audioProgress').style.width = `${progress}%`;
+            }
+        });
+        
+        audioElement.addEventListener('ended', function() {
+            // Reset progress bar when audio ends
+            if (document.getElementById('audioProgress')) {
+                document.getElementById('audioProgress').style.width = '0%';
+                document.getElementById('nowPlaying').textContent = '—';
+            }
+        });
+    });
+    
+    // Set up add to cart buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            addToCart(productId);
+        });
+    });
+}
+
+// Generate random waveform
+function generateWaveform(container) {
+    container.innerHTML = '';
+    
+    // Create a simple random waveform
+    for (let i = 0; i < 100; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.left = i * 4 + 'px';
+        bar.style.height = Math.random() * 30 + 5 + 'px';
+        container.appendChild(bar);
+    }
+}
+
+// Add product to cart
+function addToCart(productId) {
+    // Find the product in all categories
+    let product = null;
+    const categories = ['beats', 'music', 'sample-packs', 'vocal-presets'];
+    
+    for (const category of categories) {
+        const products = getProductsByCategory(category);
+        const foundProduct = products.find(p => p.id === productId);
+        if (foundProduct) {
+            product = foundProduct;
+            break;
+        }
+    }
+    
+    if (!product) {
+        console.error('Product not found:', productId);
+        return;
+    }
+    
+    // Check if product is already in cart
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+    
+    // Save cart and update UI
+    saveCartToStorage();
+    updateCartCount();
+    
+    // Show confirmation
+    alert(`${product.title} added to cart!`);
+}
+
+// Load cart items on checkout page
+function loadCartItems() {
+    const cartItemsContainer = document.getElementById('cartItems');
+    
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="text-neutral-400 py-8 text-center">Your cart is empty.</p>';
+        return;
+    }
+    
+    cartItemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item flex items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <img src="${item.cover}" alt="${item.title}" class="w-16 h-16 object-cover rounded-xl">
+                <div>
+                    <h3 class="font-medium">${item.title}</h3>
+                    <p class="text-sm text-neutral-400">R${item.price}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="quantity-btn bg-neutral-800 w-8 h-8 rounded" data-id="${item.id}" data-action="decrease">-</button>
+                <span class="quantity">${item.quantity}</span>
+                <button class="quantity-btn bg-neutral-800 w-8 h-8 rounded" data-id="${item.id}" data-action="increase">+</button>
+                <button class="remove-btn ml-4 text-red-400 hover:text-red-300" data-id="${item.id}">Remove</button>
+            </div>
         </div>
-      </div>
-    </div>
-  `;
+    `).join('');
+    
+    // Add event listeners to quantity buttons
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            const action = this.getAttribute('data-action');
+            updateCartQuantity(productId, action);
+        });
+    });
+    
+    // Add event listeners to remove buttons
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            removeFromCart(productId);
+        });
+    });
 }
 
-function cardSimple(it) {
-  return `
-    <div class="card">
-      <img class="w-full h-40 object-cover" src="${it.cover}" alt="${it.title}"
-           onerror="this.src='https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2'">
-      <div class="p-4 space-y-3">
-        <h3 class="font-medium">${it.title}</h3>
-        <p class="text-sm text-neutral-400">${it.subtitle || ''}</p>
-        <div class="flex items-center justify-between">
-          <span class="font-semibold">R${it.price}</span>
-          <button class="btn" data-add-generic="${it.id}">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  `;
+// Update cart quantity
+function updateCartQuantity(productId, action) {
+    const item = cart.find(item => item.id === productId);
+    
+    if (!item) return;
+    
+    if (action === 'increase') {
+        item.quantity += 1;
+    } else if (action === 'decrease') {
+        item.quantity -= 1;
+        if (item.quantity <= 0) {
+            removeFromCart(productId);
+            return;
+        }
+    }
+    
+    saveCartToStorage();
+    loadCartItems();
+    updateCartTotal();
 }
 
-/* ==========================
-   EVENT BINDING
-========================== */
-
-function bindBeatActions() {
-  // Play buttons
-  $$('.play-btn').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute('data-id');
-      const audio = btn.getAttribute('data-audio');
-      const title = btn.getAttribute('data-title');
-      playPreview(id, audio, title);
-    };
-  });
-
-  // Add to cart buttons
-  $$('button[data-action="add"]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute('data-id');
-      const products = loadProducts();
-      const allBeats = [...products.beats, ...products.music];
-      const item = allBeats.find(i => i.id === id);
-      if (item) addToCart({ id: item.id, title: item.title, price: item.price });
-    };
-  });
+// Remove item from cart
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    saveCartToStorage();
+    loadCartItems();
+    updateCartTotal();
+    updateCartCount();
 }
 
-/* ==========================
-   CART FUNCTIONS
-========================== */
-
-function addToCart(item) {
-  const cart = store.get('cart', []);
-  cart.push(item);
-  store.set('cart', cart);
-  cartCount();
-  alert(`Added "${item.title}" to cart!`);
+// Update cart total
+function updateCartTotal() {
+    const totalElement = document.getElementById('cartTotal');
+    if (!totalElement) return;
+    
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    totalElement.textContent = `R${total.toFixed(2)}`;
 }
 
-function cartCount() {
-  const count = store.get('cart', []).length;
-  $$('#cartCount').forEach(el => el.textContent = count);
+// Filter products
+function filterProducts(query, category) {
+    const grid = document.getElementById(`${category}Grid`);
+    if (!grid) return;
+    
+    const products = getProductsByCategory(category);
+    const filteredProducts = products.filter(product => 
+        product.title.toLowerCase().includes(query.toLowerCase()) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
+    );
+    
+    grid.innerHTML = filteredProducts.length > 0 
+        ? filteredProducts.map(product => createProductCard(product)).join('')
+        : '<p class="text-neutral-400">No products found.</p>';
+    
+    initAudioPlayers();
 }
 
-function renderCart() {
-  const list = $('#cartList');
-  if (!list) return;
-
-  const cart = store.get('cart', []);
-  const total = $('#cartTotal');
-
-  if (cart.length === 0) {
-    list.innerHTML = '<p class="text-neutral-400 py-4">Your cart is empty.</p>';
-    if (total) total.textContent = 'R0';
-    return;
-  }
-
-  list.innerHTML = cart.map((item, index) => `
-    <div class="flex items-center justify-between py-3 border-b border-neutral-800">
-      <div>
-        <p class="font-medium">${item.title}</p>
-        <p class="text-sm text-neutral-400">R${item.price}</p>
-      </div>
-      <button class="text-red-400 hover:text-red-300" data-remove="${index}">Remove</button>
-    </div>
-  `).join('');
-
-  if (total) {
-    const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
-    total.textContent = `R${cartTotal.toFixed(2)}`;
-  }
-
-  $$('button[data-remove]').forEach(btn => {
-    btn.onclick = () => {
-      const index = parseInt(btn.getAttribute('data-remove'));
-      const cart = store.get('cart', []);
-      cart.splice(index, 1);
-      store.set('cart', cart);
-      renderCart();
-      cartCount();
-    };
-  });
+// Sort products
+function sortProducts(sortBy, category) {
+    const grid = document.getElementById(`${category}Grid`);
+    if (!grid) return;
+    
+    let products = getProductsByCategory(category);
+    
+    switch(sortBy) {
+        case 'price-low':
+            products.sort((a, b) => a.price - b.price);
+            break;
+        case 'price-high':
+            products.sort((a, b) => b.price - a.price);
+            break;
+        case 'newest':
+        default:
+            products.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+            break;
+    }
+    
+    grid.innerHTML = products.map(product => createProductCard(product)).join('');
+    initAudioPlayers();
 }
 
-/* ==========================
-   INITIALIZATION
-========================== */
-
-// Initialize the catalog when the script loads
-initCatalog();
-
-// Initialize cart count
-cartCount();
-
-// Render pages based on current page
-if (typeof renderBeats === 'function' && $('#beatsGrid')) renderBeats();
-if (typeof renderMusic === 'function' && $('#musicGrid')) renderMusic();
-if (typeof renderPacks === 'function' && $('#packsGrid')) renderPacks();
-if (typeof renderPresets === 'function' && $('#presetsGrid')) renderPresets();
-if (typeof renderFeatured === 'function' && $('#featuredBeats')) renderFeatured();
-if (typeof renderCart === 'function' && $('#cartList')) renderCart();
+// Checkout functionality
+function checkout() {
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+    
+    // In a real application, this would redirect to a payment processor
+    alert('Thank you for your purchase! This is a demo - no real payment was processed.');
+    
+    // Clear cart
+    cart = [];
+    saveCartToStorage();
+    updateCartCount();
+    
+    // Reload cart page if we're on it
+    if (document.getElementById('cartItems')) {
+        loadCartItems();
+        updateCartTotal();
+    }
+}
