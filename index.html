@@ -1,0 +1,108 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Beatstore</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Homepage</a>
+      <div class="categories-dropdown">
+        Categories ▼
+        <ul class="dropdown-menu space-y-1">
+          <li><a href="beats.html">Beats</a></li .html">
+      <a href="checkout.html">Cart <span id="cartCount">0</span></a>
+    </nav>
+  </header>
+
+  <section>
+    <h1>High‑Quality Beats & Samples For Modern Artists</h1>
+    <p>Browse hand‑crafted beats, royalty‑free sample packs and studio‑ready vocal presets. Preview instantly and build your cart — all in your browser.</p>
+    <div>
+      <a href="beats.html">Browse Beats</a>
+      <a href="sample-packs.html">Sample Packs</a>
+    </div>
+  </section>
+
+  <section>
+    <p>Now playing: <span id="nowPlaying">—</span></p>
+  </section>
+
+  <section>
+    <h2>Featured Beats</h2>
+    <div id="featuredBeats" class="grid"></div>
+  </section>
+
+  <section>
+    <h2>Why Choose Us</h2>
+    <div class="grid">
+      <div>
+        <h3>Studio Quality</h3>
+        <p>Curated catalog mixed and mastered for instant radio‑ready results.</p>
+      </div>
+      <div>
+        <h3>Royalty‑Free</h3>
+        <p>Use in your projects with clear licensing. No headaches.</p>
+      </div>
+      <div>
+        <h3>One‑Click Preview</h3>
+        <p>Lightning‑fast inline previews with waveform progress.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © Beatstore. All rights reserved.
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="beats.html">Beats</a>
+      <a href="sample-packs.html">Samples</a>
+      <a href="vocal-presets.html">Vocal Presets</a>
+    </nav>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

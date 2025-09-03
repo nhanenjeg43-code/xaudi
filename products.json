@@ -1,0 +1,110 @@
+[
+  {
+    "id": "beat-1",
+    "title": "Midnight Vibes",
+    "price": 29.99,
+    "cover": "https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 85,
+    "key": "Cmin",
+    "tags": ["Trap", "Dark", "HipHop"],
+    "downloadLink": "https://drive.google.com/example1",
+    "category": "beats"
+  },
+  {
+    "id": "beat-2",
+    "title": "Summer Dreams",
+    "price": 24.99,
+    "cover": "https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 95,
+    "key": "Fmaj",
+    "tags": ["Pop", "Chill", "Summer"],
+    "downloadLink": "https://drive.google.com/example2",
+    "category": "beats"
+  },
+  {
+    "id": "beat-3",
+    "title": "Urban Flow",
+    "price": 34.99,
+    "cover": "https://images.pexels.com/photos/164837/pexels-photo-164837.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 75,
+    "key": "Gmin",
+    "tags": ["R&B", "Soul", "Urban"],
+    "downloadLink": "https://drive.google.com/example3",
+    "category": "beats"
+  },
+  {
+    "id": "music-1",
+    "title": "Midnight Vibes",
+    "price": 29.99,
+    "cover": "https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 85,
+    "key": "Cmin",
+    "tags": ["Trap", "Dark", "HipHop"],
+    "downloadLink": "https://drive.google.com/example1",
+    "category": "music"
+  },
+  {
+    "id": "music-2",
+    "title": "Summer Dreams",
+    "price": 24.99,
+    "cover": "https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 95,
+    "key": "Fmaj",
+    "tags": ["Pop", "Chill", "Summer"],
+    "downloadLink": "https://drive.google.com/example2",
+    "category": "music"
+  },
+  {
+    "id": "music-3",
+    "title": "Urban Flow",
+    "price": 34.99,
+    "cover": "https://images.pexels.com/photos/164837/pexels-photo-164837.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "audio": "assets/audio/silence.wav",
+    "bpm": 75,
+    "key "Gmin",
+    "tags": ["R&B", "Soul", "Urban"],
+    "downloadLink": "https://drive.google.com/example3",
+    "category": "music"
+  },
+  {
+    "id": "pack-1",
+    "title": "Drum Kit Vol. 1",
+    "price": 19.99,
+    "cover": "https://images.pexels.com/photos/414999/pexels-photo-414999.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "files": 120,
+    "downloadLink": "https://drive.google.com/example4",
+    "category": "sample-packs"
+  },
+  {
+    "id": "pack-2",
+    "title": "Synth Essentials",
+    "price": 24.99,
+    "cover": "https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "files": 80,
+    "downloadLink": "https://drive.google.com/example5",
+    "category": "sample-packs"
+  },
+  {
+    "id": "preset-1",
+    "title": "Vocal Chain Pro",
+    "price": 14.99,
+    "cover": "https://images.pexels.com/photos/166094/pexels-photo-166094.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "daw": "FL Studio",
+    "downloadLink": "https://drive.google.com/example6",
+    "category": "vocal-presets"
+  },
+  {
+    "id": "preset-2",
+    "title": "R&B Vocal Master",
+    "price": 19.99,
+    "cover": "https://images.pexels.com/photos/166093/pexels-photo-166093.jpeg?auto=compress&cs=tinysrgb&w=640&h=400&dpr=2",
+    "daw": "Ableton",
+    "downloadLink": "https://drive.google.com/example7",
+    "category": "vocal-presets"
+  }
+]
