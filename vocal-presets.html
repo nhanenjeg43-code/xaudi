@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale极" />
+  <title>Vocal Presets</title>
+  <meta name="description" content="High-quality beats, sample packs, and vocal presets." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/400.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.0.3/400.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .categories-dropdown {
+      position: relative;
+    }
+    .categories-dropdown .dropdown-menu {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+    }
+    .categories-dropdown:hover .dropdown-menu,
+    .categories-dropdown.open .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    @media (max-width: 767px) {
+      .categories-dropdown .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        box-shadow: 0 4极 12px rgba(0, 0, 0, 0.3);
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 text-neutral-100 font-[Geist]">
+<header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2 font-semibold tracking-tight">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+      <span>Homepage</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+      <div class="categories-dropdown">
+        <button class="hover:text-emerald-400 flex items-center gap-1">
+          Categories <span class="text-xs">▼</span>
+        </button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg py-2">
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="beats.html">Beats</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="music.html">Music</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+        </div>
+      </div>
+      <a class="hover:text-emerald-400" href="checkout.html">Cart</a>
+    </nav>
+    <div class="md:hidden flex items-center gap-4">
+      <div class="categories-dropdown relative">
+        <button id="mobileCategoriesToggle" class="inline-flex items-center gap-1极x-3 py-1.5 text-sm rounded-xl border border-neutral-800">
+          Categories <span id="dropdownArrow" class="text-xs">▼</span>
+        </button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg py-2 z-50">
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="beats.html">Beats</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href极"music.html">Music</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="sample-packs.html">Sample Packs</a>
+          <a class="block px-4 py-2 hover:bg-neutral-800 hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+        </div>
+      </div>
+      <a href="checkout.html" class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 px-3 py-1极text-sm">
+        Cart <span id="cartCount" class="inline-flex items-center justify-center text-xs w-5 h-5 rounded-full bg-emerald-400 text-neutral-900">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-12">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-semibold">Vocal Presets</h1>
+      <p class="text-neutral-400 mt-1">Studio-ready presets for your DAW.</p>
+    </div>
+    <div class="flex gap-2">
+      <input id="searchPresets" type="text" placeholder="Search…" class="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 outline-none">
+      <select id="sortPresets" class="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800">
+        <option value="new">Newest</option>
+        <option value="priceLow">Price: Low → High</option>
+        <option value="priceHigh">Price: High → Low</option>
+      </select>
+    </div>
+  </div>
+  <div id="presetsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8"></div>
+</main>
+
+<footer class="border-t border-neutral-800 mt-20">
+  <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <p>© <span id="year"></span> Beatstore. All rights reserved.</p>
+      <div class="flex items-center gap-4">
+        <a class="hover:text-emerald-400" href="index.html">Home</a>
+        <a class="hover:text-emerald-400" href="beats.html">Beats</a>
+        <a class="hover:text-emerald-400" href="sample-packs.html">Samples</a>
+        <a class="hover:text-emerald-400" href="vocal-presets.html">Vocal Presets</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+  // Mobile dropdown toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileToggle = document.getElementById('mobileCategoriesToggle');
+    const dropdownArrow = document.getElementById('dropdownArrow');
+    
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdown = this.closest('.categories-dropdown');
+        const isOpening = !dropdown.classList.contains('open');
+        
+        // Close any other open dropdowns
+        document.querySelectorAll('.categories-dropdown.open').forEach(item => {
+          if (item !== dropdown) {
+            item.classList.remove('open');
+          }
+        });
+        
+        // Toggle this dropdown
+        dropdown.classList.toggle('open');
+        
+        // Update arrow direction
+        if (dropdownArrow) {
+          dropdownArrow.textContent = dropdown.classList.contains('open') ? '▲' : '▼';
+        }
+      });
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      const dropdowns = document.querySelectorAll('.categories-dropdown');
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('open');
+          if (dropdownArrow) {
+            dropdownArrow.textContent = '▼';
+          }
+        }
+      });
+    });
+    
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // Load vocal preset items
+    loadPresetItems();
+    
+    // Add search functionality
+    const searchInput = document.getElementById('searchPresets');
+    const sortSelect = document.getElementById('sortPresets');
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        filterAndSortPresets();
+      });
+    }
+    
+    if (sortSelect) {
+      sortSelect.addEventListener('change', function() {
+        filterAndSortPresets();
+      });
+    }
+  });
+  
+  // Vocal preset data
+  const presetItems = [
+    {
+      id: 'vp1',
+      title: 'Vocal Chain Pro',
+      price: 49.99,
+      image: 'https://images.unsplash.com/photo-1571974599782-87624638275f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8f极x8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp1.mp3',
+      tags: ['vocal', 'chain', 'pro']
+    },
+    {
+      id: 'vp2',
+      title: 'R&B Vocal Effects',
+      price: 39.99,
+      image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp2.mp3',
+      tags: ['R&B', 'vocals', 'effects']
+    },
+    {
+      id: 'vp3',
+      title: 'Auto-Tune Essentials',
+      price: 59.99,
+      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp3.mp3',
+      tags: ['auto-tune', 'pitch', 'correction']
+    },
+    {
+      id: 'vp4',
+      title: 'Rap Vocal Presets',
+      price: 44.99,
+      image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGV极DB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp4.mp3',
+      tags: ['rap', 'vocals', 'presets']
+    },
+    {
+      id: 'vp5',
+      title: 'Pop Vocal Suite',
+      price: 54.99,
+      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp5.mp3',
+      tags: ['pop', 'vocals', 'suite']
+    },
+    {
+      id: 'vp6',
+      title: 'Vocal Doubler Pack',
+      price: 34.99,
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      preview: 'https://example.com/preview-vp6.mp3',
+      tags: ['doubler', 'vocals', 'thickener']
+    }
+  ];
+  
+  function loadPresetItems() {
+    const presetsGrid = document.getElementById('presetsGrid');
+    if (!presetsGrid) return;
+    
+    presetsGrid.innerHTML = '';
+    
+    presetItems.forEach(item => {
+      const presetItemElement = document.createElement('div');
+      presetItemElement.className = 'bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800';
+      presetItemElement.innerHTML = `
+        <div class="aspect-square relative group">
+          <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <button class="play-preview bg-emerald-400 text-neutral-900 rounded-full w-12 h-12 flex items-center justify-center" data-preview="${item.preview}">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0极" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">${item.title}</h3>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-emerald-400 font-semibold">$${item.price.toFixed(2)}</span>
+            <button class="add-to-cart bg-emerald-400 text-neutral-900 px-3 py-1 rounded-lg text-sm font-medium hover:bg-emerald-300 transition-colors" data-id="${item.id}" data-title="${item.title}" data-price="${item.price}">
+              Add to Cart
+            </button>
+          </div>
+          <div class="mt-2 flex flex-wrap gap-1">
+            ${item.tags.map(tag => `<span class="text-xs bg-neutral-800 px-2 py-1 rounded">${tag}</span>`).join('')}
+          </div>
+        </div>
+      `;
+      presetsGrid.appendChild(presetItemElement);
+    });
+    
+    // Add event listeners to the play buttons
+    document.querySelectorAll('.play-preview').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const previewUrl = this.getAttribute('data-preview');
+        playPreview(previewUrl);
+      });
+    });
+    
+    // Add event listeners to the add to cart buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const title = this.getAttribute('data-title');
+        const price = parseFloat(this.getAttribute('data-price'));
+        
+        addToCart(id, title, price);
+      });
+    });
+  }
+  
+  function playPreview(url) {
+    // This would play the audio preview
+    console.log('Playing preview:', url);
+    // In a real implementation, you would use the Web Audio API or an audio element
+    alert('Playing preview: ' + url);
+  }
+  
+  function addToCart(id, title, price) {
+    // Get existing cart or initialize empty array
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Check if item already in cart
+    const existingItemIndex = cart.findIndex(item => item.id === id);
+    
+    if (existingItemIndex > -1) {
+      // Item already in cart, increase quantity
+      cart[existingItemIndex极quantity += 1;
+    } else {
+      // Add new item to cart
+      cart.push({
+        id,
+        title,
+        price,
+        quantity: 1
+      });
+    }
+    
+    // Save updated cart to localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Update cart count
+    updateCartCount();
+    
+    // Show feedback to user
+    const button = document.querySelector(`.add-to-cart[data-id="${id}"]`);
+    const originalText = button.textContent;
+    button.textContent = 'Added!';
+    button.classList.add('bg-emerald-300');
+    
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.classList.remove('bg-emerald-300');
+    }, 1500);
+  }
+  
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
+      cartCountElement.textContent = totalItems;
+    }
+  }
+  
+  function filterAndSortPresets() {
+    const searchTerm = document.getElementById('searchPresets').value.toLowerCase();
+    const sortValue = document.getElementById('sortPresets').value;
+    
+    let filteredItems = presetItems.filter(item => 
+      item.title.toLowerCase().includes(searchTerm) ||
+      item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    );
+    
+    // Apply sorting
+    switch(sortValue) {
+      case 'priceLow':
+        filteredItems.sort((a, b) => a.price - b.price);
+        break;
+      case 'priceHigh':
+        filteredItems.sort((a, b) => b.price - a.price);
+        break;
+      case 'new':
+      default:
+        // Default sorting (by id as a proxy for "newest")
+        filteredItems.sort((a, b) => a.id.localeCompare(b.id));
+        break;
+    }
+    
+    // Re-render the filtered and sorted items
+    const presetsGrid = document.getElementById('presetsGrid');
+    if (!presetsGrid) return;
+    
+    presets极.innerHTML = '';
+    
+    if (filteredItems.length === 0) {
+      presetsGrid.innerHTML = '<div class="col-span-full text-center py-12 text-neutral-400">No vocal presets found matching your search.</div>';
+      return;
+    }
+    
+    filteredItems.forEach(item => {
+      const presetItemElement = document.createElement('div');
+      presetItemElement.className = 'bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800';
+      presetItemElement.innerHTML = `
+        <div class="aspect-square relative group">
+          <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-h极er:opacity-100 transition-opacity flex items-center justify-center">
+            <button class="play-preview bg-emerald-400 text-neutral-900 rounded-full w-12 h-12 flex items-center justify-center" data-preview="${item.preview}">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14极752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">${item.title}</h3>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-emerald-400 font-semibold">$${item.price.toFixed(2)}</span>
+            <button class="add-to-cart bg-emerald-400 text-neutral-900 px-3 py-1 rounded-lg text-sm font-medium hover:bg-emerald-300 transition-colors" data-id="${item.id}" data-title="${item.title}" data-price="${item.price}">
+              Add to Cart
+            </button>
+          </div>
+          <div class="mt-2 flex flex-wrap gap-1">
+            ${item.tags.map(tag => `<span class="text-xs bg-neutral-800 px-2 py-1 rounded">${tag}</span>`).join('')}
+          </div>
+        </div>
+      `;
+      presetsGrid.appendChild(presetItemElement);
+    });
+    
+    // Reattach event listeners
+    document.querySelectorAll('.play-preview').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const previewUrl = this.getAttribute('data-preview');
+        playPreview(previewUrl);
+      });
+    });
+    
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const title = this.getAttribute('data-title');
+        const price = parseFloat(this.getAttribute('data-price'));
+        
+        addToCart(id, title, price);
+      });
+    });
+  }
+  
+  // Initialize cart count on page load
+  updateCartCount();
+</script>
+<script src="script.js"></script>
+</body>
+</html>
