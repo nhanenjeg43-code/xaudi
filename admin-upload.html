@@ -133,7 +133,6 @@ const ADMIN_PASSWORD = "xaudiXdx12@";
 function checkPassword(){
   const pass = document.getElementById("password-input").value;
   if(pass === ADMIN_PASSWORD){
-    localStorage.setItem("adminLoggedIn","true");
     document.getElementById("password-screen").classList.add("hidden");
     document.getElementById("upload-form").classList.remove("hidden");
     initForm();
@@ -144,7 +143,6 @@ function checkPassword(){
 
 // Logout
 function logout(){
-  localStorage.removeItem("adminLoggedIn");
   location.reload();
 }
 
@@ -235,13 +233,6 @@ function generateWaveform() {
   }
 }
 
-// Call on load if already logged in
-if (localStorage.getItem('adminLoggedIn') === 'true') {
-  document.getElementById('password-screen').classList.add('hidden');
-  document.getElementById('upload-form').classList.remove('hidden');
-  initForm();
-}
-
 // Save product (demo with localStorage)
 document.getElementById("form").addEventListener("submit", e=>{
   e.preventDefault();
@@ -275,4 +266,3 @@ document.getElementById("form").addEventListener("submit", e=>{
 </script>
 </body>
 </html>
-
