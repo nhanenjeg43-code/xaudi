@@ -12,19 +12,21 @@
     .badge { background:#10b981; color:white; padding:2px 8px; border-radius:12px; font-size:12px; }
     .btn { background:#10b981; color:white; padding:8px 16px; border-radius:8px; font-weight:500; transition:background .2s; }
     .btn:hover { background:#059669; }
+    .dropdown { display: none; }
+    .dropdown.open { display: block; }
   </style>
 </head>
 <body class="bg-neutral-950 text-neutral-100 min-h-screen">
 
-  <!-- ✅ Navbar (kept as in your original) -->
+  <!-- ✅ Navbar -->
   <header class="sticky top-0 z-40 backdrop-blur bg-neutral-950/70 border-b border-neutral-800">
     <nav class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
       <a href="index.html" class="text-xl font-bold text-emerald-400">Xaudi</a>
       <div class="flex items-center gap-6">
         <a href="index.html" class="hover:text-emerald-400">Homepage</a>
-        <div class="relative group">
-          <button class="hover:text-emerald-400">Categories ▼</button>
-          <div class="absolute hidden group-hover:block bg-neutral-900 border border-neutral-700 mt-2 rounded-lg shadow-lg">
+        <div class="relative">
+          <button id="categoriesBtn" class="hover:text-emerald-400">Categories ▼</button>
+          <div id="categoriesMenu" class="dropdown absolute bg-neutral-900 border border-neutral-700 mt-2 rounded-lg shadow-lg">
             <a href="beats.html" class="block px-4 py-2 hover:bg-neutral-800">Beats</a>
             <a href="music.html" class="block px-4 py-2 hover:bg-neutral-800">Music</a>
             <a href="sample-packs.html" class="block px-4 py-2 hover:bg-neutral-800">Sample Packs</a>
@@ -72,13 +74,13 @@
   <script>
     // ✅ Supabase Setup
     const supabaseUrl = "https://benynilplzcrywrpikom.supabase.co";
-    const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
+    const supabaseKey = "YOUR_PUBLIC_ANON_KEY"; // replace with your anon key
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     let allProducts = [];
     let cart = [];
 
-    // ✅ Fetch Beats from Supabase
+    // ✅ Fetch Beats
     async function loadBeats() {
       const { data: products, error } = await supabaseClient
         .from("products")
@@ -171,6 +173,13 @@
     });
     document.getElementById("closeCart").addEventListener("click", () => {
       document.getElementById("cartDrawer").classList.add("translate-x-full");
+    });
+
+    // ✅ Categories Dropdown Toggle
+    const categoriesBtn = document.getElementById("categoriesBtn");
+    const categoriesMenu = document.getElementById("categoriesMenu");
+    categoriesBtn.addEventListener("click", () => {
+      categoriesMenu.classList.toggle("open");
     });
 
     // ✅ Init
