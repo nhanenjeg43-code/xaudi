@@ -169,4 +169,21 @@
 
     // ✅ Cart Drawer Toggle
     document.getElementById("cartBtn").addEventListener("click", () => {
-      document.getElementById("cartDrawer").classList.remove("translate-x-full
+      document.getElementById("cartDrawer").classList.remove("translate-x-full");
+    });
+    document.getElementById("closeCart").addEventListener("click", () => {
+      document.getElementById("cartDrawer").classList.add("translate-x-full");
+    });
+
+    // ✅ Categories Dropdown Toggle
+    const categoriesBtn = document.getElementById("categoriesBtn");
+    const categoriesMenu = document.getElementById("categoriesMenu");
+    categoriesBtn.addEventListener("click", () => {
+      categoriesMenu.classList.toggle("open");
+    });
+
+    // ✅ Init
+    document.addEventListener("DOMContentLoaded", loadPresets);
+  </script>
+</body>
+</html>
