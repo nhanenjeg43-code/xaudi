@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/400.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist@5.0.3/600.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: 'Geist', sans-serif; }
     .upload-status { display:none; padding:10px; margin:10px 0; border-radius:5px; }
@@ -129,6 +130,11 @@
 <script>
 const ADMIN_PASSWORD = "xaudiXdx12@";
 
+// Supabase config
+const supabaseUrl = "https://benynilplzcrywrpikom.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlbnluaWxwbHpjcnl3cnBpa29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NzIwODIsImV4cCI6MjA3MjU0ODA4Mn0.vRlyXxQ35-2rnkxFkhxX9XbdPkfXqxIduTB1Ed4KjUk";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
 // Password check
 function checkPassword(){
   const pass = document.getElementById("password-input").value;
@@ -206,7 +212,6 @@ function updatePreview() {
   document.getElementById('preview-price').textContent = `R${price}`;
   document.getElementById('preview-download').href = downloadLink || '#';
 
-  // Tags
   const tagsContainer = document.getElementById('preview-tags');
   tagsContainer.innerHTML = '';
   if (tags) {
@@ -233,8 +238,8 @@ function generateWaveform() {
   }
 }
 
-// Save product (demo with localStorage)
-document.getElementById("form").addEventListener("submit", e=>{
+// Supabase upload and save
+document.getElementById("form").addEventListener("submit", async e => {
   e.preventDefault();
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
@@ -249,20 +254,45 @@ document.getElementById("form").addEventListener("submit", e=>{
     return;
   }
 
-  const product = {
-    id: Date.now(),
-    title, category, price, tags, downloadLink,
-    cover: window._coverObjectUrl,
-    audio: window._audioObjectUrl
-  };
+  try {
+    // Upload cover
+    const { data: coverData, error: coverError } = await supabaseClient
+      .storage.from("covers")
+      .upload(`cover-${Date.now()}-${coverFile.name}`, coverFile);
+    if (coverError) throw coverError;
+    const { data: coverUrl } = supabaseClient.storage.from("covers").getPublicUrl(coverData.path);
 
-  let products = JSON.parse(localStorage.getItem("catalogProducts")||"[]");
-  products.push(product);
-  localStorage.setItem("catalogProducts", JSON.stringify(products));
-  alert("Product saved!");
-  e.target.reset();
-  updatePreview();
+    // Upload audio
+    const { data: audioData, error: audioError } = await supabaseClient
+      .storage.from("audio")
+      .upload(`audio-${Date.now()}-${audioFile.name}`, audioFile);
+    if (audioError) throw audioError;
+    const { data: audioUrl } = supabaseClient.storage.from("audio").getPublicUrl(audioData.path);
+
+    // Insert product into DB
+    const { error: dbError } = await supabaseClient.from("products").insert([
+      {
+        title,
+        category,
+        price,
+        tags,
+        download_link: downloadLink,
+        cover_url: coverUrl.publicUrl,
+        audio_url: audioUrl.publicUrl
+      }
+    ]);
+    if (dbError) throw dbError;
+
+    alert("✅ Product uploaded successfully!");
+    e.target.reset();
+    updatePreview();
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Upload failed: " + err.message);
+  }
 });
 </script>
 </body>
 </html>
+
